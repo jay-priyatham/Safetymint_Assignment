@@ -7,6 +7,21 @@
     <title>Charts</title>
 </head>
 <body>
-    
+    <table style="width: 100%" border="2px">
+        <tr>
+            <th>    </th>
+            <th>Minor</th>
+            <th>Serious</th>
+            <th>Critical</th>
+        </tr>
+        {% for date, count in x.items %}
+            <tr>
+                <td>{{ date }}</td>
+                {% for c in count %}
+                    <td>{{ c }}</td>
+                    {% endfor %}               
+            </tr>
+            {% endfor %}
+    </table>
 </body>
 </html>
