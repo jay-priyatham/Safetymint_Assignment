@@ -1,4 +1,5 @@
 from calendar import calendar, month, month_abbr
+import re
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .forms import UploadFileForm
@@ -14,8 +15,8 @@ def upload_file_view(request):
         if form.is_valid():
             data_set=handle_uploaded_file(request.FILES['file'])
             
-            
-            return render(request,"chart.html",)
+            return render(request,"<h1>OKAY</h1>",{})
+            #return render(request,"chart.html",{data_set})
     else:
         form = UploadFileForm()
     return render(request, 'upload.html', {'form': form})
@@ -24,35 +25,28 @@ def upload_file_view(request):
 
 def Month_Name_Using_Date(date):
     d = datetime.strptime(date,'%d-%b-%y')
-    Month_name=d.strftime('%b')
+    Month_name=d.strftime('%b-%y')
     return Month_name
 
 def handle_uploaded_file(file):
     
-    # wb=openpyxl.load_workbook(file)
-    # sheet_obj=wb.active
+    wb=openpyxl.load_workbook(file)
+    sheet_obj=wb.active
     
-    # data_dict={}
-    # for i in range(1,13):
-    #     data_dict[month_abbr[i%12 ]]={}
-    
-    # types_of_severity=["Minor","Serious","Critical"]
-    
-    # for i in data_dict:
-    #     for j in types_of_severity:
-    #         data_dict[i][j]=0
+    data_dict={}
+    rowCount=sheet_obj.max_row
+    colCount=sheet_obj.max_column
 
-    # row = sheet_obj.max_row
-    # column = sheet_obj.max_column
-
-    # for i in range(2, row + 1): 
-    #     d = Month_Name_Using_Date(sheet_obj.cell(row = i, column = 2))
-    #     severity = sheet_obj.cell(row = i, column = 3)
-    #     data_dict[d][severity]+=1
+    for i in range(2,rowCount+1):
+        cell_date=datetime.strftime(sh.cell(row=i,column=2).value,"%b-%y")
+        cell_type=sh.cell(row=i,column=3).value
+        if cell_date not in data_dict:
+            data_dict[cell_date]={"Minor":0,"Serious":0,"Critical":0}
+        data_dict[cell_date][cell_type]+=1
 
         
 
-    return
+    return data_dict
 
 def chartdisp(li):
     
